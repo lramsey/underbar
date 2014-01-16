@@ -94,10 +94,35 @@ var _ = { };
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    var thisIsTrue = _.filter(collection, test);
+    var thisIsFalse = [];
+    for (var i = 0; i < collection.length; i++) {
+      for (var j = 0; j < thisIsTrue.length; j++) {
+        if (collection[i] === thisIsTrue[j]) {
+          break;
+        }
+        else if (j === thisIsTrue.length - 1) {
+          thisIsFalse.push(collection[i]);
+        }
+      }
+    }
+    return thisIsFalse;
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
+    var unique = [array[0]];
+    for (var i = 1; i < array.length; i++) {
+      for (var j = 0; j < unique.length; j++) {
+        if (array[i] === unique[j]) {
+          break;
+        }
+        else if (j === unique.length -1) {
+          unique.push(array[i]);
+        }
+      }
+    }
+    return unique;
   };
 
 
