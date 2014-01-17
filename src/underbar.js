@@ -176,6 +176,16 @@ var _ = { };
   //     return total + number;
   //   }, 0); // should be 6
   _.reduce = function(collection, iterator, accumulator) {
+
+    for (var key in collection) {
+      if (accumulator === null) {
+        accumulator = collection[key];
+      }
+      else {
+      accumulator = iterator(accumulator, collection[key]);
+      }
+    }
+    return accumulator;
   };
 
   // Determine if the array or object contains a given value (using `===`).
