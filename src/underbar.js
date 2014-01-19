@@ -82,7 +82,7 @@ var _ = { };
     var thisIsTrue = [];
     if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length; i++) {
-        if (test(collection[i]) === true) {
+        if (test(collection[i])) {
           thisIsTrue.push(collection[i]);
         }
       }
@@ -160,6 +160,18 @@ var _ = { };
   // Calls the method named by methodName on each value in the list.
   // Note: you will nead to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
+    var results = [];
+    if (typeof functionOrKey === "function") {
+      for(var i = 0; i < collection.length; i++) {
+        results.push(functionOrKey.apply(collection[i], collection));
+      }
+    }
+    else if (typeof functionOrKey === "string") {
+      for (var j = 0; j < collection.length; j++) {
+        results.push(collection[j][functionOrKey]());
+      }
+    }
+    return results;
   };
 
   // Reduces an array or object to a single value by repetitively calling
@@ -232,6 +244,9 @@ var _ = { };
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+    for (var key in arguments) {
+      obj[key] = arguments[key];
+    }
   };
 
   // Like extend, but doesn't ever overwrite a key that already
