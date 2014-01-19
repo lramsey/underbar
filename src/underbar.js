@@ -235,6 +235,8 @@ var _ = { };
           return false;
         case false:
           return false;
+        case null:
+          return false;
       }
     }
     return true;
@@ -244,6 +246,15 @@ var _ = { };
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    var someTruth = [];
+    var state = false;
+    for (var key in collection) {
+      someTruth[0] = collection[key];
+      if(_.every(someTruth, iterator)){
+        return true;
+      }
+    }
+    return false;
   };
 
 
