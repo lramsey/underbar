@@ -78,16 +78,13 @@ var _ = { };
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
-
     var thisIsTrue = [];
-    if (Array.isArray(collection)) {
-      for (var i = 0; i < collection.length; i++) {
-        if (test(collection[i])) {
-          thisIsTrue.push(collection[i]);
+      _.each(collection, function(item) {
+        if (test(item)) {
+          thisIsTrue.push(item);
         }
-      }
+      });
       return thisIsTrue;
-    }
   };
 
   // Return all elements of an array that don't pass a truth test.
@@ -96,16 +93,11 @@ var _ = { };
     // copying code in and modifying it
     var thisIsTrue = _.filter(collection, test);
     var thisIsFalse = [];
-    for (var i = 0; i < collection.length; i++) {
-      for (var j = 0; j < thisIsTrue.length; j++) {
-        if (collection[i] === thisIsTrue[j]) {
-          break;
-        }
-        else if (j === thisIsTrue.length - 1) {
-          thisIsFalse.push(collection[i]);
-        }
+    _.each(collection, function(item){
+        if(_.indexOf(thisIsTrue, item) === -1){
+          thisIsFalse.push(item);
       }
-    }
+    });
     return thisIsFalse;
   };
 
@@ -133,9 +125,9 @@ var _ = { };
     // the members, it also maintains an array of results.
 
     var results = [];
-    for (var i = 0; i < array.length; i++) {
-      results.push(iterator(array[i]));
-    }
+    _.each(array, function(item){
+      results.push(iterator(item));
+    });
     return results;
   };
 
