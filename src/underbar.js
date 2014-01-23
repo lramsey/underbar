@@ -216,16 +216,12 @@ var _ = { };
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
-    var states = [];
-    var truthTest;
+    var truthTest = [];
     for (var key in collection) {
-      states.push(collection[key]);
+      truthTest.push(collection[key]);
     }
     if (typeof iterator === 'function') {
-      truthTest = _.map(states, iterator);
-    }
-    else {
-      truthTest = states;
+      truthTest = _.map(truthTest, iterator);
     }
     for (var item in truthTest){
       switch(truthTest[item]) {
@@ -392,6 +388,47 @@ var _ = { };
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    var sorted = [];
+    var done = [];
+    if (typeof iterator === "function"){
+      for(var element in collection){
+        sorted.push(iterator(collection[element]));
+      }
+    }
+    else if (typeof iterator === "string") {
+      for (var key in collection) {
+        sorted.push(collection[key][iterator]);
+      }
+    }
+    sorted = sorted.sort();
+    var collector = {};
+    for(var property in collection) {
+      collector[property] = collection[property];
+    }
+    
+    if (typeof iterator === "function") {
+      for(var num = 0; num < sorted.length; num++) {
+        for (var item in collector) {
+          if (sorted[num] === iterator(collector[item])){
+            done.push(collector[item]);
+            delete collector[item];
+            break;
+          }
+        }
+      }
+    }
+    else if (typeof iterator === "string"){
+      for (var index = 0; index < sorted.length; index++){
+        for (var thing in collector) {
+          if (sorted[index] === collector[thing][iterator]){
+            done.push(collector[thing]);
+            delete collector[thing];
+            break;
+          }
+        }
+      }
+    }
+    return done;
   };
 
   // Zip together two or more arrays with elements of the same index
