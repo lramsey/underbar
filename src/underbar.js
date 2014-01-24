@@ -203,26 +203,31 @@ var _ = { };
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    var state = true;
     var truthTest = [];
-    for (var key in collection) {
-      truthTest.push(collection[key]);
-    }
+    _.each(collection, function(item){
+      truthTest.push(item);
+    });
     if (typeof iterator === 'function') {
       truthTest = _.map(truthTest, iterator);
     }
-    for (var item in truthTest){
-      switch(truthTest[item]) {
+    _.each(truthTest, function(item){
+      switch(item){
         case 0:
-          return false;
+          state = false;
+          return;
         case undefined:
-          return false;
+          state = false;
+          return;
         case false:
-          return false;
+          state = false;
+          return;
         case null:
-          return false;
+          state = false;
+          return;
       }
-    }
-    return true;
+    });
+    return state;
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
@@ -231,13 +236,14 @@ var _ = { };
     // TIP: There's a very clever way to re-use every() here.
     var someTruth = [];
     var state = false;
-    for (var key in collection) {
-      someTruth[0] = collection[key];
+    _.each(collection, function(key){
+      someTruth[0] = key;
       if(_.every(someTruth, iterator)){
-        return true;
+        state = true;
+        return;
       }
-    }
-    return false;
+    });
+    return state;
   };
 
 
