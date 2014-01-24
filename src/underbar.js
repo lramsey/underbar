@@ -103,17 +103,12 @@ var _ = { };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array) {
-    var unique = [array[0]];
-    for (var i = 1; i < array.length; i++) {
-      for (var j = 0; j < unique.length; j++) {
-        if (array[i] === unique[j]) {
-          break;
-        }
-        else if (j === unique.length -1) {
-          unique.push(array[i]);
-        }
+    var unique = [];
+    _.each(array, function(item){
+      if(_.indexOf(unique, item) === -1){
+        unique.push(item);
       }
-    }
+    });
     return unique;
   };
 
@@ -154,14 +149,14 @@ var _ = { };
   _.invoke = function(collection, functionOrKey, args) {
     var results = [];
     if (typeof functionOrKey === "function") {
-      for(var i = 0; i < collection.length; i++) {
-        results.push(functionOrKey.apply(collection[i], collection));
-      }
+      _.each(collection, function(item){
+        results.push(functionOrKey.apply(item, collection));
+      });
     }
     else if (typeof functionOrKey === "string") {
-      for (var j = 0; j < collection.length; j++) {
-        results.push(collection[j][functionOrKey]());
-      }
+      _.each(collection, function(item) {
+        results.push(item[functionOrKey]());
+      });
     }
     return results;
   };
@@ -181,14 +176,14 @@ var _ = { };
   //   }, 0); // should be 6
   _.reduce = function(collection, iterator, accumulator) {
 
-    for (var key in collection) {
+     _.each(collection, function(item){
       if (accumulator === null) {
-        accumulator = collection[key];
+        accumulator = item;
       }
       else {
-      accumulator = iterator(accumulator, collection[key]);
+      accumulator = iterator(accumulator, item);
       }
-    }
+    });
     return accumulator;
   };
 
