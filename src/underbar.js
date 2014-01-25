@@ -148,15 +148,29 @@ var _ = { };
   // Note: you will nead to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
     var results = [];
-    if (typeof functionOrKey === "function") {
-      _.each(collection, function(item){
-        results.push(functionOrKey.apply(item, collection));
-      });
-    }
-    else if (typeof functionOrKey === "string") {
-      _.each(collection, function(item) {
-        results.push(item[functionOrKey]());
-      });
+    var functionResults = function(list){
+      if (typeof functionOrKey === "function") {
+        _.each(list, function(item){
+          results.push(functionOrKey.apply(item, list));
+        });
+      }
+      else if (typeof functionOrKey === "string") {
+        _.each(list, function(item) {
+          results.push(item[functionOrKey]());
+        });
+      }
+    };
+    var moreArgs = Array.prototype.slice.call(arguments);
+    var manyResults = [];
+    _.each(moreArgs, function(item){
+      if(Array.isArray(item)){
+          results = [];
+          functionResults(item);
+          manyResults.push(results);
+      }
+    });
+    if(moreArgs.length > 2){
+      results = manyResults;
     }
     return results;
   };
