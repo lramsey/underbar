@@ -147,30 +147,31 @@ var _ = { };
   // Calls the method named by methodName on each value in the list.
   // Note: you will nead to learn a bit about .apply to complete this.
   _.invoke = function(collection, functionOrKey, args) {
-    var results = [];
     var functionResults = function(list){
+      var outputs = [];
       if (typeof functionOrKey === "function") {
         _.each(list, function(item){
-          results.push(functionOrKey.apply(item, list));
+          outputs.push(functionOrKey.apply(item, list));
         });
       }
       else if (typeof functionOrKey === "string") {
         _.each(list, function(item) {
-          results.push(item[functionOrKey]());
+          outputs.push(item[functionOrKey]());
         });
       }
+      return outputs;
     };
-    var moreArgs = Array.prototype.slice.call(arguments);
-    var manyResults = [];
-    _.each(moreArgs, function(item){
-      if(Array.isArray(item)){
-          results = [];
-          functionResults(item);
-          manyResults.push(results);
-      }
-    });
-    if(moreArgs.length > 2){
-      results = manyResults;
+    var results = functionResults(collection);
+    
+    var moreArgs = Array.prototype.slice.call(arguments, 2);
+    if (moreArgs.length !== 0){
+      results = [results];
+      _.each(moreArgs, function(item){
+        if(Array.isArray(item)){
+          outputs = functionResults(item);
+          results.push(outputs);
+        }
+      });
     }
     return results;
   };
@@ -195,7 +196,7 @@ var _ = { };
         accumulator = item;
       }
       else {
-      accumulator = iterator(accumulator, item);
+        accumulator = iterator(accumulator, item);
       }
     });
     return accumulator;
@@ -280,25 +281,29 @@ var _ = { };
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
-    _.each(arguments, function(thisObj){
+    var args = Array.prototype.slice.call(arguments, 1);
+    var obj1 = arguments[0];
+    _.each(args, function(thisObj){
       for (var key in thisObj ) {
-        obj[key] = thisObj[key];
+        obj1[key] = thisObj[key];
       }
     });
-    return obj;
+    return obj1;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
-    _.each(arguments, function(thisObj){
+    var args = Array.prototype.slice.call(arguments, 1);
+    var obj1 = arguments[0];
+    _.each(args, function(thisObj){
       for (var key in thisObj) {
-        if (obj[key] === undefined) {
-          obj[key] = thisObj[key];
+        if (obj1[key] === undefined) {
+          obj1[key] = thisObj[key];
         }
       }
     });
-    return obj;
+    return obj1;
   };
 
 
@@ -357,10 +362,9 @@ var _ = { };
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
-    var args = Array.prototype.slice.call(arguments);
-    var params = args.slice(2);
+    var args = Array.prototype.slice.call(arguments, 2);
     setTimeout(function() {
-      func.apply(this, params);
+      func.apply(this, args);
     }, wait);
   };
 
