@@ -167,10 +167,7 @@ var _ = { };
     if (moreArgs.length !== 0){
       results = [results];
       _.each(moreArgs, function(item){
-        if(Array.isArray(item)){
-          outputs = functionResults(item);
-          results.push(outputs);
-        }
+        results.push(functionResults(item));
       });
     }
     return results;
