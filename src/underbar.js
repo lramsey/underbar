@@ -381,8 +381,9 @@ var _ = { };
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
     var mixedArray = [];
-    for(var key in array) {
-      mixedArray[key] = array[key];
+    var diffArray = array.slice();
+    for(var item in diffArray) {
+      mixedArray[item] = diffArray[item];
     }
     return mixedArray;
   };
