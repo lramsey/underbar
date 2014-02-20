@@ -279,28 +279,26 @@ var _ = { };
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
     var args = Array.prototype.slice.call(arguments, 1);
-    var obj1 = arguments[0];
     _.each(args, function(thisObj){
-      for (var key in thisObj ) {
-        obj1[key] = thisObj[key];
-      }
+      _.each(thisObj, function(element, key)  {
+        obj[key] = element;
+      });
     });
-    return obj1;
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
     var args = Array.prototype.slice.call(arguments, 1);
-    var obj1 = arguments[0];
     _.each(args, function(thisObj){
-      for (var key in thisObj) {
-        if (obj1[key] === undefined) {
-          obj1[key] = thisObj[key];
+      _.each(thisObj, function(element, key) {
+        if (obj[key] === undefined) {
+          obj[key] = element;
         }
-      }
+      });
     });
-    return obj1;
+    return obj;
   };
 
 
@@ -378,10 +376,10 @@ var _ = { };
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
     var mixedArray = [];
-    var diffArray = array.slice();
-    for(var item in diffArray) {
-      mixedArray[item] = diffArray[item];
-    }
+    var diffArray = array.slice(0);
+    _.each(diffArray, function(element, index) {
+      mixedArray[index] = element;
+    });
     return mixedArray;
   };
 
@@ -397,45 +395,44 @@ var _ = { };
   // of that string. For example, _.sortBy(people, 'name') should sort
   // an array of people by their name.
   _.sortBy = function(collection, iterator) {
+    var collector = {};
     var sorted = [];
     var done = [];
-    if (typeof iterator === "function"){
-      for(var element in collection){
-        sorted.push(iterator(collection[element]));
-      }
-    }
-    else if (typeof iterator === "string") {
-      for (var key in collection) {
-        sorted.push(collection[key][iterator]);
-      }
-    }
-    sorted = sorted.sort();
-    var collector = {};
-    for(var property in collection) {
-      collector[property] = collection[property];
-    }
     
-    if (typeof iterator === "function") {
-      for(var num = 0; num < sorted.length; num++) {
-        for (var item in collector) {
-          if (sorted[num] === iterator(collector[item])){
-            done.push(collector[item]);
-            delete collector[item];
-            break;
+    _.each(collection, function(element, key) {
+      collector[key] = element;
+    });
+
+    if (typeof iterator === "function"){
+      _.each(collection, function(element) {
+        sorted.push(iterator(element));
+      });
+      sorted = sorted.sort();
+      _.each(sorted, function(sortItem) {
+        _.each(collector, function(element, key) {
+          if (sortItem === iterator(element)){
+            done.push(element);
+            delete collector[key];
+            return;
           }
-        }
-      }
+        });
+      });
     }
-    else if (typeof iterator === "string"){
-      for (var index = 0; index < sorted.length; index++){
-        for (var thing in collector) {
-          if (sorted[index] === collector[thing][iterator]){
-            done.push(collector[thing]);
-            delete collector[thing];
-            break;
+
+    else if (typeof iterator === "string") {
+      _.each(collection, function(element) {
+        sorted.push(element[iterator]);
+      });
+      sorted = sorted.sort();
+      _.each(sorted, function(sortItem){
+        _.each(collector, function(element, key) {
+          if (sortItem === element[iterator]){
+            done.push(element);
+            delete collector[key];
+            return;
           }
-        }
-      }
+        });
+      });
     }
     return done;
   };
