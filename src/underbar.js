@@ -445,12 +445,12 @@ var _ = { };
   _.zip = function() {
     var zipline = [];
     var sorted = _.sortBy(arguments, 'length');
-    var big = sorted[sorted.length - 1];
-    for(var i = 0; i < big.length  ; i++){
+    var big = sorted[sorted.length -1];
+    for(var num = 0; num < big.length  ; num++){
       var innerArray = [];
-      for (var j = 0; j < arguments.length; j++) {
-        innerArray.push(arguments[j][i]);
-      }
+      _.each(arguments, function(element) {
+        innerArray.push(element[num]);
+      });
       zipline.push(innerArray);
     }
     return zipline;
@@ -462,19 +462,19 @@ var _ = { };
   // Hint: Use Array.isArray to check if something is an array
   _.flatten = function(nestedArray, result) {
     var flatlanders = [];
-    for(var i = 0; i < nestedArray.length; i++){
-      if(!Array.isArray(nestedArray[i])){
-        flatlanders.push(nestedArray[i]);
+    for (var num = 0; num < nestedArray.length; num++) {
+      if(!Array.isArray(nestedArray[num])){
+        flatlanders.push(nestedArray[num]);
       }
-      else if (nestedArray[i].length === 1){
-        nestedArray[i] = nestedArray[i][0];
-        i--;
+      else if (nestedArray[num].length === 1){
+        nestedArray[num] = nestedArray[num][0];
+        num--;
       }
       else {
-        var newArray = _.flatten(nestedArray[i]);
-        for(var j = 0; j< newArray.length; j++) {
-          flatlanders.push(newArray[j]);
-        }
+        var newArray = _.flatten(nestedArray[num]);
+        _.each(newArray, function(element) {
+          flatlanders.push(element);
+        });
       }
     }
 
