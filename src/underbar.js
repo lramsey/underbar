@@ -91,14 +91,11 @@ var _ = { };
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
-    var thisIsTrue = _.filter(collection, test);
-    var thisIsFalse = [];
-    _.each(collection, function(item){
-        if(_.indexOf(thisIsTrue, item) === -1){
-          thisIsFalse.push(item);
+    return _.filter(collection, function(item){
+      if(!test(item)) {
+        return true;
       }
     });
-    return thisIsFalse;
   };
 
   // Produce a duplicate-free version of the array.
@@ -189,12 +186,7 @@ var _ = { };
   _.reduce = function(collection, iterator, accumulator) {
 
      _.each(collection, function(item){
-      if (accumulator === null) {
-        accumulator = item;
-      }
-      else {
-        accumulator = iterator(accumulator, item);
-      }
+      accumulator = accumulator === null ? item: iterator(accumulator, item);
     });
     return accumulator;
   };
