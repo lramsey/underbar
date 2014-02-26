@@ -348,8 +348,10 @@ var _ = { };
   _.shuffle = function(array) {
     var mixedArray = [];
     var diffArray = array.slice(0);
+    var random;
     _.each(diffArray, function(element, index) {
-      mixedArray[index] = element;
+      random = Math.floor(Math.random()*(diffArray.length-1));
+      mixedArray[random] = diffArray.splice(random, 1);
     });
     return mixedArray;
   };
@@ -497,6 +499,29 @@ var _ = { };
   //
   // See the Underbar readme for details.
   _.throttle = function(func, wait) {
+    var tooSoon = false;
+    var result;
+    var moment;
+    return function(){
+      if(!tooSoon){
+        result = func.apply(this, arguments);
+        tooSoon = true;
+        moment = Date.now();
+        setTimeout(function(){
+          tooSoon = false;
+        }, wait);
+
+      }
+      else{
+        var now = Date.now();
+        result = _.delay(function(){
+          func.apply(this, arguments);
+        }, wait - (now - moment));
+        moment = Date.now();
+        tooSoon = true;
+      }
+      return result;
+    };
   };
 
 }).call(this);
